@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Data Visualization</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #000;
+    color: white;
+    overflow: hidden;
+}
+#container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
+#controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: rgba(0,0,0,0.7);
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    gap: 10px;
+}
+#login {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1000;
+    background: rgba(0,0,0,0.9);
+    padding: 40px;
+    border-radius: 15px;
+}
+button {
+    padding: 10px 20px;
+    background: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+button:hover { background: #3367D6; }
+.tile {
+    width: 160px;
+    height: 160px;
+    background: #333;
+    border-radius: 8px;
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: center;
+    transition: transform 0.3s;
+}
+.tile:hover { transform: scale(1.05); }
+.tile img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.tile h4 { margin: 5px 0; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile p { margin: 2px 0; font-size: 10px; }
+.hidden { display: none !important; }
+</style>
+
+<!-- Google API -->
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS3DRenderer.js"></script>
+
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login">
+    <h2>Data Visualization Dashboard</h2>
+    <p>Please sign in with Google to continue</p>
+    <div id="g_id_onload"
+         data-client_id="871333751758-ti0icbbvg3pflc7qpm8js8lbe85ehlih.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+</div>
+
+<!-- Main Visualization -->
+<div id="container" class="hidden"></div>
+
+<!-- Controls -->
+<div id="controls" class="hidden">
+    <button onclick="setLayout('table')">Table</button>
+    <button onclick="setLayout('sphere')">Sphere</button>
+    <button onclick="setLayout('helix')">Helix</button>
+    <button onclick="setLayout('grid')">Grid</button>
+</div>
+
+<!-- Your script -->
+<script src="script.js"></script>
+
+</body>
+</html>
