@@ -116,7 +116,7 @@ function setLayout(layout) {
     if (layout === 'sphere') layoutSphere();
     if (layout === 'helix') layoutHelix();
     if (layout === 'grid') layoutGrid();
-	if (layout === 'pyramid') layoutPyramid();
+	if (layout === 'tetrahedron') layoutTetrahedron();
 }
 
 // ===================== TABLE 20x10 =====================
@@ -200,33 +200,46 @@ function layoutGrid() {
         }
     }
 }
-
-// ===================== PYRAMID (TETRAHEDRON) =====================
-function layoutPyramid() {
+// ===================== PYRAMID / TETRAHEDRON =====================
+function layoutTetrahedron() {
     const n = objects.length;
-    const layers = Math.ceil(Math.cbrt(n)); // number of layers
-    const spacing = 200;
+    const size = 600;
+
+    // Define tetrahedron vertices
+    const A = new THREE.Vector3(0, size, 0);
+    const B = new THREE.Vector3(-size, -size, size);
+    const C = new THREE.Vector3(size, -size, size);
+    const D = new THREE.Vector3(0, -size, -size);
+
+    // Define edges
+    const edges = [
+        [A, B], [A, C], [A, D],
+        [B, C], [B, D], [C, D]
+    ];
+
     let i = 0;
+    const tilesPerEdge = Math.ceil(n / edges.length);
 
-    for (let y = 0; y < layers; y++) {
-        const layerSize = layers - y; // number of objects along one side of this layer
-        const offset = (layerSize - 1) * spacing / 2;
+    edges.forEach(([V1, V2]) => {
+        for (let j = 0; j < tilesPerEdge; j++) {
+            if (i >= n) return;
 
-        for (let row = 0; row < layerSize; row++) {
-            for (let col = 0; col < layerSize - row; col++) {
-                if (i >= n) return;
+            const t = j / (tilesPerEdge - 1 || 1); // fraction along edge
+            const pos = new THREE.Vector3(
+                V1.x * (1 - t) + V2.x * t,
+                V1.y * (1 - t) + V2.y * t,
+                V1.z * (1 - t) + V2.z * t
+            );
 
-                const x = (col * spacing) - offset + (row * spacing / 2);
-                const yPos = -y * spacing; // vertical spacing downwards
-                const z = (row * spacing) - offset;
-
-                objects[i].position.set(x, yPos, z);
-                objects[i].rotation.set(0, 0, 0);
-                i++;
-            }
+            objects[i].position.copy(pos);
+            objects[i].lookAt(0, 0, 0);
+            i++;
         }
-    }
+    });
 }
+
+
+
 // ===================== FALLBACK DATA =====================
 function useSampleData() {
     data = [];
@@ -262,7 +275,9 @@ function animate() {
     if (currentLayout === 'sphere') {
         scene.rotation.y += 0.0015;
     }
-
+	if (currentLayout === 'tetrahedron') {
+    scene.rotation.y += 0.0015;
+}
     controls.update();
     renderer.render(scene, camera);
 }
