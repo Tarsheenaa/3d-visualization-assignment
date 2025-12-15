@@ -116,6 +116,7 @@ function setLayout(layout) {
     if (layout === 'sphere') layoutSphere();
     if (layout === 'helix') layoutHelix();
     if (layout === 'grid') layoutGrid();
+	if (layout === 'pyramid') layoutPyramid();
 }
 
 // ===================== TABLE 20x10 =====================
@@ -200,6 +201,32 @@ function layoutGrid() {
     }
 }
 
+// ===================== PYRAMID (TETRAHEDRON) =====================
+function layoutPyramid() {
+    const n = objects.length;
+    const layers = Math.ceil(Math.cbrt(n)); // number of layers
+    const spacing = 200;
+    let i = 0;
+
+    for (let y = 0; y < layers; y++) {
+        const layerSize = layers - y; // number of objects along one side of this layer
+        const offset = (layerSize - 1) * spacing / 2;
+
+        for (let row = 0; row < layerSize; row++) {
+            for (let col = 0; col < layerSize - row; col++) {
+                if (i >= n) return;
+
+                const x = (col * spacing) - offset + (row * spacing / 2);
+                const yPos = -y * spacing; // vertical spacing downwards
+                const z = (row * spacing) - offset;
+
+                objects[i].position.set(x, yPos, z);
+                objects[i].rotation.set(0, 0, 0);
+                i++;
+            }
+        }
+    }
+}
 // ===================== FALLBACK DATA =====================
 function useSampleData() {
     data = [];
